@@ -1,0 +1,71 @@
+Crear el chatbot
+https://chatbotslife.com/building-a-slackbot-with-hubot-85016dd1477e
+# instala nvm
+# instala node
+# instala npm
+
+# instala dependencias de hubot 
+npm install -g yo generator-hubot
+
+# wizard para generar la estructura del proyecto de bot
+yo hubot --adapter=slack
+# introducir detalles
+
+# insertar el archivo para gestionar conversaciones
+/scripts/conversations.js (se puede usar el existente pero está en coffe, añadimos otro para typescript)
+
+# esto busca la palabra "buenas" en la frase y responde "Hola!!!"
+module.exports = (robot) => {
+  robot.respond(/(.*)buenas(.*)/, (msg) => {
+    msg.send("Hola!!!!");
+  });
+}
+
+# ya se puede probar en local
+./bin/hubot
+
+## si Windows no permite ejecutar scripts hay que activar los permisos
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine
+
+
+
+Conectar con Slack
+https://slack.dev/hubot-slack/
+
+# Crear en tu Slack una aplicación (antigua) y dar de alta un chatbot para generar un token bot
+https://api.slack.com/legacy/custom-integrations/legacy-tokens
+
+# Poner el token del bot de Slack en una variable de entorno
+HUBOT_SLACK_TOKEN = xoxb-[restoDelToken]
+
+# Ya se puede ejecutar el bot contra Slack
+./bin/hubot --adapter slack
+
+
+
+Conectar bot con Machine Learning
+# Crear una App en wit.ai
+
+# Crear un token público para conectar con wit.ai
+
+# Crear configuración
+/resources/config.json
+{
+  "witToken": "RZVONI6T5NC7KPEE7QB3KXTDLJO53OCB",
+  "confidenceThreshold": 0.85
+}
+
+con el token y el nivel de confianza que aceptaríamos como mínimo para aceptar que hemos entendido lo que ha llegado
+
+# Modificar el analizador para pasar por wit
+cambiar /scripts/conversations.js y meter
+
+const querywit = require('../src/query-wit.js').querywit;
+
+robot.respond(/(.*)/, (msg) => {
+    querywit(robot, msg);
+  });
+
+## introducir /src/query-wit.js
+## introducir actions.js
